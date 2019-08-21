@@ -37,16 +37,16 @@ int newDataPoint3 = 0;
 
 
 //textbox 
-ControlP5 cp5;
+ControlP5 button1,button2,text1;
 PImage img,img2;
-
+int menu =0;
 void setup()                                                       //the setup routine (runs once at startup)
 {
-  background(c_dark);
+  background(29, 33, 44); 
   img2 = loadImage(dataPath("bubbles.png"));
   img = loadImage(dataPath("algasicons.png"));
   pulse = new Pulse(this);
-  pulse.play();
+  
   
   
   rectMode(CENTER);
@@ -56,12 +56,38 @@ void setup()                                                       //the setup r
   smooth();                                                        //smooth out lines and other graphics. If you don't like the fuzzy lines, replace "smooth()" with "noSmooth()"
   //println(Serial.list());                                        //this will print a list of avaiable serial ports
   //myPort = new Serial(this, Serial.list()[4], 9600);  
-  PFont font = createFont("arial", 20);
+  button1 = new ControlP5(this);
+  button2 = new ControlP5(this);
+      button1.addButton("buttonA")
+       .setPosition(175,400)
+       .setColorValue(color(55, 203, 133))
+         .setSize(125, 50);
+         
+     button2.addButton("buttonB")
+       .setPosition(550,400)
+       .setColorValue(color(55, 203, 133))
+         .setSize(125, 50);
  
-  cp5 = new ControlP5(this);
- 
-  cp5.addTextfield("textInput_1")
-    .setPosition(20, 100)
+  
+  
+  //uncomment this if you'd like to use a serial port to get data (you will have to write code to fetch data)exec(dataPath("WINSCOPE.EXE"));
+}
+
+void draw()                                                        //the main routine (runs continuously until the program is ended)
+{ 
+  switch (menu){
+    case 0:
+      image(img, 300,200,150,150);
+      image(img2, 240,7,300,400);
+
+      
+    break;
+    case 1:
+      button2.hide();
+      text1 = new ControlP5(this);
+      PFont font = createFont("arial", 20);
+      text1.addTextfield("textInput_1")
+      .setPosition(20, 100)
       .setSize(200, 40)
         .setFont(font)
           .setFocus(true)
@@ -69,21 +95,14 @@ void setup()                                                       //the setup r
               .setInputFilter(ControlP5.INTEGER)
               .setText("0");
   
-  //uncomment this if you'd like to use a serial port to get data (you will have to write code to fetch data)
-  exec(dataPath("WINSCOPE.EXE"));
-}
-
-void draw()                                                        //the main routine (runs continuously until the program is ended)
-{ 
-  switch menu 
-  if(cp5.get(Textfield.class, "textInput_1").getText().equals(""))
-  {
-    pulse.freq(0);
-  }else
-  {
-    newDataPoint3 = 350 - (Integer.parseInt(cp5.get(Textfield.class, "textInput_1").getText()))/60;
-    pulse.freq(Integer.parseInt(cp5.get(Textfield.class, "textInput_1").getText()));
-  }
+      if(text1.get(Textfield.class, "textInput_1").getText().equals(""))
+      {
+        pulse.freq(0);
+      }else
+      {
+        newDataPoint3 = 350 - (Integer.parseInt(text1.get(Textfield.class, "textInput_1").getText()))/60;
+        pulse.freq(Integer.parseInt(text1.get(Textfield.class, "textInput_1").getText()));
+      }
   
   background(255,255,255);                                         //set the background to white. There are RGB color selectors online if you'd like to find a better looking color
   stroke(0,0,0);                                                   //set the stroke (line) color to black
@@ -122,8 +141,16 @@ void draw()                                                        //the main ro
     stroke(0,0,255);
     line(i,data3[i-1], i+1, data3[i]); 
   }
+  pulse.play();
+    break;
   
   
-
   
-}         
+  }
+  
+} 
+public void buttonA(int value){
+  menu =1;
+  button1.hide();
+  button2.hide();
+}
